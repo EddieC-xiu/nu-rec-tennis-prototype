@@ -6,184 +6,249 @@
 <title>NU Rec Tennis Prototype</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
-/* Layout: one narrow column; each topic is its own short page, reached from the tennis home page. */
+/* Layout: one narrow column. Each page answers one question, in the same order: title, one-line purpose, steps or answer, help line. */
 :root {
   --purple: #4e2a84;
+  --purple-soft: #efeaf6;
   --bg: #ffffff;
-  --soft: #f4f2f7;
+  --soft: #f5f4f7;
   --fg: #1d1928;
-  --muted: #5a5366;
-  --line: #d9d4e2;
-  --open: #1f6b3a;
-  --taken: #8a4b00;
+  --muted: #555060;
+  --line: #d6d1de;
+  --open: #1d6a38;
+  --open-soft: #e4f3e9;
+  --taken: #8a4500;
+  --taken-soft: #fbeedd;
   --focus: #e8a400;
   --on-accent: #ffffff;
   --font: "Atkinson Hyperlegible", Verdana, Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --purple: #c2adeb; --bg: #17141e; --soft: #221e2c; --fg: #f1eef7; --muted: #bdb6cb; --line: #3d3650;
-  --open: #84d6a0; --taken: #f2b869; --focus: #ffc94d; --on-accent: #17141e; color-scheme: dark } }
+  --purple: #c4b0ec; --purple-soft: #2a2339; --bg: #16131c; --soft: #211d29; --fg: #f2eff7; --muted: #c0b9cc; --line: #3e3750;
+  --open: #86d7a2; --open-soft: #17331f; --taken: #f3bb6c; --taken-soft: #3a2a12; --focus: #ffc94d; --on-accent: #16131c; color-scheme: dark } }
 :root[data-theme="dark"] {
-  --purple: #c2adeb; --bg: #17141e; --soft: #221e2c; --fg: #f1eef7; --muted: #bdb6cb; --line: #3d3650;
-  --open: #84d6a0; --taken: #f2b869; --focus: #ffc94d; --on-accent: #17141e; color-scheme: dark }
+  --purple: #c4b0ec; --purple-soft: #2a2339; --bg: #16131c; --soft: #211d29; --fg: #f2eff7; --muted: #c0b9cc; --line: #3e3750;
+  --open: #86d7a2; --open-soft: #17331f; --taken: #f3bb6c; --taken-soft: #3a2a12; --focus: #ffc94d; --on-accent: #16131c; color-scheme: dark }
 
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 1.0625rem; line-height: 1.55; }
-h1, h2 { line-height: 1.2; margin: 0; text-wrap: balance; }
-h1 { font-size: 1.9rem; }
-h2 { font-size: 1.15rem; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 1.125rem; line-height: 1.55; }
+h1, h2 { margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.25rem; }
 p { margin: 0; }
 a { color: var(--purple); text-underline-offset: 3px; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.wrap { max-width: 680px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
-.note { background: var(--soft); color: var(--muted); font-size: .9rem; border-bottom: 1px solid var(--line); }
-.note .wrap { padding-block: 8px; }
 header { background: #4e2a84; color: #ffffff; }
-header .wrap { padding-block: 14px; font-weight: 700; font-size: 1.1rem; }
+header .wrap { padding-block: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+header b { font-size: 1.1rem; }
+header span { font-size: .85rem; opacity: .9; }
 
-main { padding-block: 28px 56px; }
-.view { display: flex; flex-direction: column; gap: 20px; }
-.lede { color: var(--muted); }
-.back { font-size: .95rem; }
+main { padding-block: 24px 48px; }
+.view { display: flex; flex-direction: column; gap: 24px; }
+.purpose { color: var(--muted); }
+.back { font-size: 1rem; display: inline-block; padding: 6px 0; }
 
-.menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-.menu a { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; min-height: 56px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--fg); }
+/* Home menu */
+.menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.menu a { display: flex; flex-direction: column; gap: 2px; padding: 18px 20px; border: 2px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--fg); }
 .menu a:hover { border-color: var(--purple); }
-.menu a span { color: var(--muted); font-size: .95rem; }
-.menu a::after { content: "›"; color: var(--purple); font-size: 1.4rem; }
+.menu a b { font-size: 1.15rem; color: var(--purple); }
+.menu a span { color: var(--muted); }
 
-.fields { display: flex; flex-wrap: wrap; gap: 16px; }
-.fields label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
-select { font: inherit; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: 16px; background: var(--soft); border-radius: 10px; padding: 20px; }
+.step label { display: block; font-weight: 700; margin-bottom: 6px; }
+.step label i { font-style: normal; display: inline-block; min-width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 50%; background: var(--purple); color: var(--on-accent); margin-right: 8px; font-size: .95rem; }
+select { width: 100%; font: inherit; min-height: 48px; padding: 8px 12px; border: 2px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
 
-.info { background: var(--soft); border-radius: 8px; padding: 12px 14px; }
+/* Results */
+.answer { font-size: 1.25rem; font-weight: 700; }
+.busy { color: var(--muted); }
+.group { display: flex; flex-direction: column; gap: 10px; }
+.group h2 { font-size: 1.05rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.court { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border-radius: 10px; border: 2px solid var(--line); }
+.court.is-open { border-color: var(--open); background: var(--open-soft); }
+.court.is-taken { background: var(--soft); }
+.court .name { font-weight: 700; font-size: 1.15rem; }
+.court .detail { color: var(--muted); }
+.court.is-open .detail { color: var(--fg); }
+.badge { font-weight: 700; font-size: .95rem; }
+.badge.open { color: var(--open); }
+.badge.taken { color: var(--taken); }
+.btn { font: inherit; font-weight: 700; min-height: 48px; padding: 8px 20px; border-radius: 8px; border: 2px solid var(--purple); background: var(--purple); color: var(--on-accent); cursor: pointer; }
+.btn.plain { background: var(--bg); color: var(--purple); }
+.empty { color: var(--muted); }
 
-.list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
-.list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 0; border-bottom: 1px solid var(--line); }
-.open { color: var(--open); font-weight: 700; }
-.taken { color: var(--taken); font-weight: 700; }
-.btn { font: inherit; font-weight: 700; min-height: 44px; padding: 8px 18px; border-radius: 8px; border: 2px solid var(--purple); background: var(--purple); color: var(--on-accent); cursor: pointer; }
-.btn.plain { background: transparent; color: var(--purple); }
+.confirm { border: 2px solid var(--purple); background: var(--purple-soft); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
 
-.ph { border: 2px dashed var(--line); border-radius: 8px; padding: 14px 16px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
-.ph b { color: var(--fg); }
+/* Big number */
+.big { display: flex; flex-direction: column; gap: 4px; background: var(--soft); border-radius: 10px; padding: 20px; }
+.big strong { font-size: 2.2rem; line-height: 1.1; }
+
+/* Simple key/value rows */
+.rows { margin: 0; border-top: 2px solid var(--line); }
+.rows div { display: flex; justify-content: space-between; gap: 16px; padding: 14px 4px; border-bottom: 1px solid var(--line); }
+.rows dt { font-weight: 700; }
+.rows dd { margin: 0; text-align: right; color: var(--muted); }
+.todo { font-size: .85rem; font-weight: 700; color: var(--taken); background: var(--taken-soft); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
 
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
-th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
-thead th { color: var(--muted); font-size: .95rem; }
-.scroll { overflow-x: auto; }
-ul.rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
-footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line); }
-footer .wrap { padding-block: 16px 28px; }
+th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid var(--line); }
+thead th { border-bottom: 2px solid var(--line); }
+.box { background: var(--soft); border-radius: 10px; padding: 16px 18px; }
+ul.plain { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+
+.help { border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); }
+footer { color: var(--muted); font-size: .9rem; background: var(--soft); }
+footer .wrap { padding-block: 14px 24px; }
 </style>
 </head>
 <body>
 
-<div class="note"><div class="wrap">Prototype for user testing. Court times are example data. No real bookings are made.</div></div>
-<header><div class="wrap">NU Recreation · Tennis</div></header>
+<header><div class="wrap"><b>NU Recreation · Tennis</b><span>Prototype</span></div></header>
 
 <main class="wrap" id="main">
 
   <!-- Home -->
   <section class="view" id="v-home" aria-labelledby="h-home">
-    <h1 id="h-home" tabindex="-1">Tennis Courts</h1>
-    <p class="lede">What do you want to do?</p>
+    <div>
+      <h1 id="h-home" tabindex="-1">Tennis Courts</h1>
+      <p class="purpose">Choose what you want to do.</p>
+    </div>
     <ul class="menu">
-      <li><a href="#reserve">Reserve an indoor court <span>See open times</span></a></li>
-      <li><a href="#outdoor">Outdoor courts <span>See which are free</span></a></li>
-      <li><a href="#rentals">Racket and ball rentals <span>Options and prices</span></a></li>
-      <li><a href="#rules">Prices and rules</a></li>
+      <li><a href="#reserve"><b>Reserve an indoor court</b><span>See which courts are open and book a time</span></a></li>
+      <li><a href="#outdoor"><b>Check outdoor courts</b><span>See how many outdoor courts are free now</span></a></li>
+      <li><a href="#rentals"><b>Rent a racket or balls</b><span>See what you can rent and the price</span></a></li>
+      <li><a href="#rules"><b>Prices and rules</b><span>Court prices and booking rules</span></a></li>
     </ul>
-    <p class="lede">Questions? Call <b>847-491-4312</b></p>
+    <p class="help">Need help? Call <b>847-491-4312</b></p>
   </section>
 
-  <!-- Reserve (needs: open times, busy level, next free time) -->
+  <!-- Reserve -->
   <section class="view" id="v-reserve" aria-labelledby="h-reserve" hidden>
-    <a class="back" href="#home">‹ Back to Tennis</a>
-    <h1 id="h-reserve" tabindex="-1">Reserve an indoor court</h1>
-    <p class="lede">Combe Tennis Center · 6 courts</p>
-    <div class="fields">
-      <label for="day">Day
-        <select id="day"><option value="0">Today</option><option value="1">Tomorrow</option></select>
-      </label>
-      <label for="start">Start time
-        <select id="start"></select>
-      </label>
-      <label for="dur">Length
-        <select id="dur"><option value="1">30 min</option><option value="2" selected>1 hour</option><option value="3">1.5 hours</option></select>
-      </label>
+    <a class="back" href="#home">‹ Back</a>
+    <div>
+      <h1 id="h-reserve" tabindex="-1">Reserve an indoor court</h1>
+      <p class="purpose">Combe Tennis Center · 6 indoor courts</p>
     </div>
-    <p class="info" id="busy" aria-live="polite"></p>
-    <ul class="list" id="courts" aria-label="Courts at this time"></ul>
-    <p class="info" id="confirm" role="status" hidden></p>
-    <p class="lede">Need a racket? <a href="#rentals">See rentals</a></p>
+
+    <div class="steps">
+      <div class="step"><label for="day"><i>1</i>Choose a day</label>
+        <select id="day"><option value="0">Today</option><option value="1">Tomorrow</option></select></div>
+      <div class="step"><label for="start"><i>2</i>Choose a start time</label>
+        <select id="start"></select></div>
+      <div class="step"><label for="dur"><i>3</i>Choose how long</label>
+        <select id="dur"><option value="1">30 minutes</option><option value="2" selected>1 hour</option><option value="3">1.5 hours</option></select></div>
+    </div>
+
+    <div aria-live="polite" class="view" style="gap:16px">
+      <div>
+        <p class="answer" id="answer"></p>
+        <p class="busy" id="busy"></p>
+      </div>
+      <div class="group">
+        <h2 id="h-open">Open courts</h2>
+        <div id="open-list" class="group"></div>
+      </div>
+      <div class="group">
+        <h2 id="h-taken">Taken at this time</h2>
+        <div id="taken-list" class="group"></div>
+      </div>
+    </div>
+
+    <div class="confirm" id="confirm" role="status" hidden></div>
+    <p class="help">Need a racket? <a href="#rentals">See rentals</a> · Questions? Call <b>847-491-4312</b></p>
   </section>
 
-  <!-- Outdoor (need: outdoor availability) -->
+  <!-- Outdoor -->
   <section class="view" id="v-outdoor" aria-labelledby="h-outdoor" hidden>
-    <a class="back" href="#home">‹ Back to Tennis</a>
-    <h1 id="h-outdoor" tabindex="-1">Outdoor courts</h1>
-    <p class="lede">Vandy Christie Tennis Center · 15 courts · First come, first served (no reservations)</p>
-    <p class="info"><b id="out-count"></b> right now (example)</p>
-    <div class="ph"><b>Area for live court status</b><span>A list of which outdoor courts are open, with the time it was last updated.</span></div>
-    <div class="ph"><b>Area for weather and closures</b><span>Whether the outdoor courts are open today (for example, closed for rain or for winter).</span></div>
-  </section>
-
-  <!-- Rentals (need: rental options and prices) -->
-  <section class="view" id="v-rentals" aria-labelledby="h-rentals" hidden>
-    <a class="back" href="#home">‹ Back to Tennis</a>
-    <h1 id="h-rentals" tabindex="-1">Racket and ball rentals</h1>
-    <div class="ph"><b>Racket rental</b><span>Area to show price and types available.</span></div>
-    <div class="ph"><b>Tennis balls</b><span>Area to show price, and whether balls are rented or sold.</span></div>
-    <div class="ph"><b>Where to pick up</b><span>Area to show the pickup location and what to bring (for example, Wildcard).</span></div>
-  </section>
-
-  <!-- Prices and rules (from the current NU Rec page) -->
-  <section class="view" id="v-rules" aria-labelledby="h-rules" hidden>
-    <a class="back" href="#home">‹ Back to Tennis</a>
-    <h1 id="h-rules" tabindex="-1">Prices and rules</h1>
-    <p><b>Prime time:</b> weekdays after 4 p.m. and all day on weekends.</p>
-    <div class="scroll">
-      <table>
-        <caption class="sr-only">Indoor court prices for students</caption>
-        <thead><tr><th scope="col">Length</th><th scope="col">Student, prime</th><th scope="col">Student, non-prime</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">30 min</th><td>$8</td><td>$7</td></tr>
-          <tr><th scope="row">1 hour</th><td>$17</td><td>$15</td></tr>
-          <tr><th scope="row">1.5 hours</th><td>$25</td><td>$22</td></tr>
-        </tbody>
-      </table>
+    <a class="back" href="#home">‹ Back</a>
+    <div>
+      <h1 id="h-outdoor" tabindex="-1">Outdoor courts</h1>
+      <p class="purpose">Vandy Christie Tennis Center · 15 courts</p>
     </div>
-    <ul class="rules">
-      <li>Reserve up to one day in advance.</li>
-      <li>Up to 1.5 hours per day.</li>
-      <li>Students play free (drop-in) when a court is open. Bring your Wildcard.</li>
-    </ul>
+    <div class="big">
+      <strong id="out-count"></strong>
+      <span>open right now</span>
+    </div>
+    <div class="box">
+      <p><b>No reservation needed.</b> Outdoor courts are first come, first served. Just walk over and play.</p>
+    </div>
+    <dl class="rows">
+      <div><dt>Open today?</dt><dd><span class="todo">Placeholder</span> weather or season closures</dd></div>
+      <div><dt>Last updated</dt><dd><span class="todo">Placeholder</span> time of last check</dd></div>
+    </dl>
+    <p class="help">Questions? Call <b>847-491-4312</b></p>
+  </section>
+
+  <!-- Rentals -->
+  <section class="view" id="v-rentals" aria-labelledby="h-rentals" hidden>
+    <a class="back" href="#home">‹ Back</a>
+    <div>
+      <h1 id="h-rentals" tabindex="-1">Rent a racket or balls</h1>
+      <p class="purpose">What you can rent, how much it costs, and where to get it.</p>
+    </div>
+    <dl class="rows">
+      <div><dt>Racket</dt><dd><span class="todo">Placeholder</span> price</dd></div>
+      <div><dt>Tennis balls</dt><dd><span class="todo">Placeholder</span> price</dd></div>
+      <div><dt>Where to pick up</dt><dd><span class="todo">Placeholder</span> location</dd></div>
+      <div><dt>What to bring</dt><dd><span class="todo">Placeholder</span> e.g. Wildcard</dd></div>
+    </dl>
+    <p class="help">Questions? Call <b>847-491-4312</b></p>
+  </section>
+
+  <!-- Prices and rules -->
+  <section class="view" id="v-rules" aria-labelledby="h-rules" hidden>
+    <a class="back" href="#home">‹ Back</a>
+    <div>
+      <h1 id="h-rules" tabindex="-1">Prices and rules</h1>
+      <p class="purpose">For indoor courts. Outdoor courts are free.</p>
+    </div>
+    <table>
+      <caption class="sr-only">Indoor court prices for students</caption>
+      <thead><tr><th scope="col">Length</th><th scope="col">Evenings &amp; weekends</th><th scope="col">Weekdays before 4 p.m.</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">30 min</th><td>$8</td><td>$7</td></tr>
+        <tr><th scope="row">1 hour</th><td>$17</td><td>$15</td></tr>
+        <tr><th scope="row">1.5 hours</th><td>$25</td><td>$22</td></tr>
+      </tbody>
+    </table>
+    <p class="purpose">Student prices. Evenings = weekdays after 4 p.m.</p>
+    <div class="box">
+      <ul class="plain">
+        <li>You can book up to <b>one day ahead</b>.</li>
+        <li>You can book up to <b>1.5 hours per day</b>.</li>
+        <li>Students can play <b>free</b> on any open court. Bring your Wildcard.</li>
+      </ul>
+    </div>
+    <p class="help">Questions? Call <b>847-491-4312</b></p>
   </section>
 </main>
 
-<footer><div class="wrap">Student prototype for a UX course. Not an official Northwestern website. Prices and rules are from the current NU Rec tennis page.</div></footer>
+<footer><div class="wrap">Student prototype for a UX class. Court times are example data, and no real bookings are made. Not an official Northwestern website.</div></footer>
 
 <script>
 (function () {
-  var COURTS = 6, OPEN = 7 * 60, SLOTS = 30; // example hours 7 a.m.–10 p.m.
+  var COURTS = 6, OPEN = 7 * 60, SLOTS = 30; // example hours 7 a.m.–10 p.m., 30-minute slots
   var PRICE = { prime: [0, 8, 17, 25], non: [0, 7, 15, 22] };
+  var LEN = ["", "30 minutes", "1 hour", "1.5 hours"];
   var $ = function (id) { return document.getElementById(id); };
   var views = ["home", "reserve", "outdoor", "rentals", "rules"];
 
   function dayDate(d) { var t = new Date(); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() + d); return t; }
-  function time(s) { var m = OPEN + s * 30, h = Math.floor(m / 60), mm = m % 60; return (h % 12 || 12) + ":" + (mm ? "30" : "00") + (h >= 12 ? " p.m." : " a.m."); }
+  function time(s) { var m = OPEN + s * 30, h = Math.floor(m / 60); return (h % 12 || 12) + ":" + (m % 60 ? "30" : "00") + (h >= 12 ? " p.m." : " a.m."); }
   function prime(d, s) { var w = dayDate(d).getDay(); return w === 0 || w === 6 || OPEN + s * 30 >= 16 * 60; }
 
-  // Example schedule: the same day always shows the same reservations.
+  // Example schedule: the same day always shows the same bookings.
   function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
   var cache = {};
   function schedule(d) {
-    var key = dayDate(d).toDateString();
+    var dt = dayDate(d), key = dt.toDateString();
     if (cache[key]) return cache[key];
-    var r = rng(key.length * 7919 + dayDate(d).getDate() * 31 + dayDate(d).getMonth()), grid = [];
+    var r = rng(dt.getDate() * 31 + dt.getMonth() * 7 + 11), grid = [];
     for (var c = 0; c < COURTS; c++) {
       var row = new Array(SLOTS).fill(false), s = 0;
       while (s < SLOTS) {
@@ -208,29 +273,36 @@ footer .wrap { padding-block: 16px 28px; }
   }
 
   function renderReserve() {
-    var grid = schedule(st.day), used = 0, html = "";
-    for (var c = 0; c < COURTS; c++) if (grid[c][st.start]) used++;
-    var level = used <= 2 ? "Not busy" : used <= 4 ? "Somewhat busy" : "Very busy";
-    $("busy").innerHTML = "<b>" + level + "</b> at " + time(st.start) + ": " + used + " of 6 courts in use.";
+    var grid = schedule(st.day), openHtml = "", takenHtml = "", openCount = 0, inUse = 0;
     var cost = PRICE[prime(st.day, st.start) ? "prime" : "non"][st.len];
-    for (c = 0; c < COURTS; c++) {
+    var when = (st.day ? "tomorrow" : "today") + " at " + time(st.start);
+    for (var c = 0; c < COURTS; c++) {
       var row = grid[c];
+      if (row[st.start]) inUse++;
       if (free(row, st.start, st.len)) {
-        html += "<li><span>Court " + (c + 1) + ' · <span class="open">Open</span> · $' + cost + ' (student)</span>' +
-          '<button class="btn" type="button" data-court="' + c + '">Reserve<span class="sr-only"> court ' + (c + 1) + "</span></button></li>";
+        openCount++;
+        openHtml += '<div class="court is-open"><div><p class="name">Court ' + (c + 1) + ' <span class="badge open">· Open</span></p>' +
+          '<p class="detail">' + LEN[st.len] + " · $" + cost + " for students</p></div>" +
+          '<button class="btn" type="button" data-court="' + c + '">Reserve<span class="sr-only"> court ' + (c + 1) + "</span></button></div>";
       } else {
         var n = nextFree(row, st.start, st.len);
-        html += "<li><span>Court " + (c + 1) + ' · <span class="taken">Taken</span> · ' + (n >= 0 ? "free at " + time(n) : "no more openings today") + "</span>" +
-          (n >= 0 ? '<button class="btn plain" type="button" data-jump="' + n + '">Show ' + time(n) + "</button>" : "") + "</li>";
+        takenHtml += '<div class="court is-taken"><div><p class="name">Court ' + (c + 1) + ' <span class="badge taken">· Taken</span></p>' +
+          '<p class="detail">' + (n >= 0 ? "Next open at " + time(n) : "No more openings this day") + "</p></div>" +
+          (n >= 0 ? '<button class="btn plain" type="button" data-jump="' + n + '">Try ' + time(n) + "</button>" : "") + "</div>";
       }
     }
-    $("courts").innerHTML = html;
+    $("answer").textContent = openCount + " of 6 courts open " + when;
+    var level = inUse <= 2 ? "Not busy" : inUse <= 4 ? "A little busy" : "Very busy";
+    $("busy").textContent = "How busy: " + level + " (" + inUse + " of 6 courts in use)";
+    $("open-list").innerHTML = openHtml || '<p class="empty">No courts are open at this time. Try a time below.</p>';
+    $("taken-list").innerHTML = takenHtml || '<p class="empty">None. Every court is open.</p>';
+    $("h-taken").parentNode.hidden = !takenHtml;
   }
 
   function renderOutdoor() {
     var r = rng(new Date().getDate() * 97 + new Date().getHours()), open = 0;
     for (var i = 0; i < 15; i++) if (r() > 0.55) open++;
-    $("out-count").textContent = open + " of 15 courts open";
+    $("out-count").textContent = open + " of 15";
   }
 
   function show() {
@@ -239,20 +311,24 @@ footer .wrap { padding-block: 16px 28px; }
     views.forEach(function (name) { $("v-" + name).hidden = name !== v; });
     $("confirm").hidden = true;
     if (v === "reserve") renderReserve();
-    var h = $("h-" + v); if (h && location.hash) h.focus();
+    if (location.hash) { var h = $("h-" + v); if (h) h.focus(); }
     window.scrollTo(0, 0);
   }
 
-  $("day").addEventListener("change", function () { st.day = +this.value; $("confirm").hidden = true; renderReserve(); });
-  $("start").addEventListener("change", function () { st.start = +this.value; $("confirm").hidden = true; renderReserve(); });
-  $("dur").addEventListener("change", function () { st.len = +this.value; fillStart(); $("confirm").hidden = true; renderReserve(); });
-  $("courts").addEventListener("click", function (e) {
+  function changed() { $("confirm").hidden = true; renderReserve(); }
+  $("day").addEventListener("change", function () { st.day = +this.value; changed(); });
+  $("start").addEventListener("change", function () { st.start = +this.value; changed(); });
+  $("dur").addEventListener("change", function () { st.len = +this.value; fillStart(); changed(); });
+
+  $("v-reserve").addEventListener("click", function (e) {
     var b = e.target.closest("button"); if (!b) return;
-    if (b.dataset.jump) { st.start = +b.dataset.jump; $("start").value = String(st.start); renderReserve(); $("start").focus(); return; }
-    var c = +b.dataset.court;
+    if (b.dataset.jump) { st.start = +b.dataset.jump; $("start").value = String(st.start); changed(); $("answer").scrollIntoView({ block: "start" }); return; }
+    if (b.dataset.court === undefined) return;
+    var c = +b.dataset.court, cost = PRICE[prime(st.day, st.start) ? "prime" : "non"][st.len];
     $("confirm").hidden = false;
-    $("confirm").innerHTML = "<b>Prototype:</b> Court " + (c + 1) + " at " + time(st.start) + " " + (st.day ? "tomorrow" : "today") +
-      " would be booked here. No real booking was made.";
+    $("confirm").innerHTML = "<p><b>Court " + (c + 1) + " · " + (st.day ? "Tomorrow" : "Today") + " · " + time(st.start) + " to " + time(st.start + st.len) + "</b></p>" +
+      "<p>Price: $" + cost + " (student)</p><p><b>Prototype:</b> this is where your booking would be confirmed. No real booking was made.</p>";
+    $("confirm").scrollIntoView({ block: "nearest" });
   });
   window.addEventListener("hashchange", show);
 
