@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NU Rec Tennis Prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one narrow column; each topic is its own short page, reached from the tennis home page. */
+:root {
+  --purple: #4e2a84;
+  --bg: #ffffff;
+  --soft: #f4f2f7;
+  --fg: #1d1928;
+  --muted: #5a5366;
+  --line: #d9d4e2;
+  --open: #1f6b3a;
+  --taken: #8a4b00;
+  --focus: #e8a400;
+  --on-accent: #ffffff;
+  --font: "Atkinson Hyperlegible", Verdana, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --purple: #c2adeb; --bg: #17141e; --soft: #221e2c; --fg: #f1eef7; --muted: #bdb6cb; --line: #3d3650;
+  --open: #84d6a0; --taken: #f2b869; --focus: #ffc94d; --on-accent: #17141e; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --purple: #c2adeb; --bg: #17141e; --soft: #221e2c; --fg: #f1eef7; --muted: #bdb6cb; --line: #3d3650;
+  --open: #84d6a0; --taken: #f2b869; --focus: #ffc94d; --on-accent: #17141e; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 1.0625rem; line-height: 1.55; }
+h1, h2 { line-height: 1.2; margin: 0; text-wrap: balance; }
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.15rem; }
+p { margin: 0; }
+a { color: var(--purple); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 680px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.note { background: var(--soft); color: var(--muted); font-size: .9rem; border-bottom: 1px solid var(--line); }
+.note .wrap { padding-block: 8px; }
+header { background: #4e2a84; color: #ffffff; }
+header .wrap { padding-block: 14px; font-weight: 700; font-size: 1.1rem; }
+
+main { padding-block: 28px 56px; }
+.view { display: flex; flex-direction: column; gap: 20px; }
+.lede { color: var(--muted); }
+.back { font-size: .95rem; }
+
+.menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.menu a { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; min-height: 56px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--fg); }
+.menu a:hover { border-color: var(--purple); }
+.menu a span { color: var(--muted); font-size: .95rem; }
+.menu a::after { content: "›"; color: var(--purple); font-size: 1.4rem; }
+
+.fields { display: flex; flex-wrap: wrap; gap: 16px; }
+.fields label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
+select { font: inherit; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
+
+.info { background: var(--soft); border-radius: 8px; padding: 12px 14px; }
+
+.list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+.list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.open { color: var(--open); font-weight: 700; }
+.taken { color: var(--taken); font-weight: 700; }
+.btn { font: inherit; font-weight: 700; min-height: 44px; padding: 8px 18px; border-radius: 8px; border: 2px solid var(--purple); background: var(--purple); color: var(--on-accent); cursor: pointer; }
+.btn.plain { background: transparent; color: var(--purple); }
+
+.ph { border: 2px dashed var(--line); border-radius: 8px; padding: 14px 16px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+.ph b { color: var(--fg); }
+
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+thead th { color: var(--muted); font-size: .95rem; }
+.scroll { overflow-x: auto; }
+ul.rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+footer { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 16px 28px; }
+</style>
+</head>
+<body>
+
+<div class="note"><div class="wrap">Prototype for user testing. Court times are example data. No real bookings are made.</div></div>
+<header><div class="wrap">NU Recreation · Tennis</div></header>
+
+<main class="wrap" id="main">
+
+  <!-- Home -->
+  <section class="view" id="v-home" aria-labelledby="h-home">
+    <h1 id="h-home" tabindex="-1">Tennis Courts</h1>
+    <p class="lede">What do you want to do?</p>
+    <ul class="menu">
+      <li><a href="#reserve">Reserve an indoor court <span>See open times</span></a></li>
+      <li><a href="#outdoor">Outdoor courts <span>See which are free</span></a></li>
+      <li><a href="#rentals">Racket and ball rentals <span>Options and prices</span></a></li>
+      <li><a href="#rules">Prices and rules</a></li>
+    </ul>
+    <p class="lede">Questions? Call <b>847-491-4312</b></p>
+  </section>
+
+  <!-- Reserve (needs: open times, busy level, next free time) -->
+  <section class="view" id="v-reserve" aria-labelledby="h-reserve" hidden>
+    <a class="back" href="#home">‹ Back to Tennis</a>
+    <h1 id="h-reserve" tabindex="-1">Reserve an indoor court</h1>
+    <p class="lede">Combe Tennis Center · 6 courts</p>
+    <div class="fields">
+      <label for="day">Day
+        <select id="day"><option value="0">Today</option><option value="1">Tomorrow</option></select>
+      </label>
+      <label for="start">Start time
+        <select id="start"></select>
+      </label>
+      <label for="dur">Length
+        <select id="dur"><option value="1">30 min</option><option value="2" selected>1 hour</option><option value="3">1.5 hours</option></select>
+      </label>
+    </div>
+    <p class="info" id="busy" aria-live="polite"></p>
+    <ul class="list" id="courts" aria-label="Courts at this time"></ul>
+    <p class="info" id="confirm" role="status" hidden></p>
+    <p class="lede">Need a racket? <a href="#rentals">See rentals</a></p>
+  </section>
+
+  <!-- Outdoor (need: outdoor availability) -->
+  <section class="view" id="v-outdoor" aria-labelledby="h-outdoor" hidden>
+    <a class="back" href="#home">‹ Back to Tennis</a>
+    <h1 id="h-outdoor" tabindex="-1">Outdoor courts</h1>
+    <p class="lede">Vandy Christie Tennis Center · 15 courts · First come, first served (no reservations)</p>
+    <p class="info"><b id="out-count"></b> right now (example)</p>
+    <div class="ph"><b>Area for live court status</b><span>A list of which outdoor courts are open, with the time it was last updated.</span></div>
+    <div class="ph"><b>Area for weather and closures</b><span>Whether the outdoor courts are open today (for example, closed for rain or for winter).</span></div>
+  </section>
+
+  <!-- Rentals (need: rental options and prices) -->
+  <section class="view" id="v-rentals" aria-labelledby="h-rentals" hidden>
+    <a class="back" href="#home">‹ Back to Tennis</a>
+    <h1 id="h-rentals" tabindex="-1">Racket and ball rentals</h1>
+    <div class="ph"><b>Racket rental</b><span>Area to show price and types available.</span></div>
+    <div class="ph"><b>Tennis balls</b><span>Area to show price, and whether balls are rented or sold.</span></div>
+    <div class="ph"><b>Where to pick up</b><span>Area to show the pickup location and what to bring (for example, Wildcard).</span></div>
+  </section>
+
+  <!-- Prices and rules (from the current NU Rec page) -->
+  <section class="view" id="v-rules" aria-labelledby="h-rules" hidden>
+    <a class="back" href="#home">‹ Back to Tennis</a>
+    <h1 id="h-rules" tabindex="-1">Prices and rules</h1>
+    <p><b>Prime time:</b> weekdays after 4 p.m. and all day on weekends.</p>
+    <div class="scroll">
+      <table>
+        <caption class="sr-only">Indoor court prices for students</caption>
+        <thead><tr><th scope="col">Length</th><th scope="col">Student, prime</th><th scope="col">Student, non-prime</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">30 min</th><td>$8</td><td>$7</td></tr>
+          <tr><th scope="row">1 hour</th><td>$17</td><td>$15</td></tr>
+          <tr><th scope="row">1.5 hours</th><td>$25</td><td>$22</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="rules">
+      <li>Reserve up to one day in advance.</li>
+      <li>Up to 1.5 hours per day.</li>
+      <li>Students play free (drop-in) when a court is open. Bring your Wildcard.</li>
+    </ul>
+  </section>
+</main>
+
+<footer><div class="wrap">Student prototype for a UX course. Not an official Northwestern website. Prices and rules are from the current NU Rec tennis page.</div></footer>
+
+<script>
+(function () {
+  var COURTS = 6, OPEN = 7 * 60, SLOTS = 30; // example hours 7 a.m.–10 p.m.
+  var PRICE = { prime: [0, 8, 17, 25], non: [0, 7, 15, 22] };
+  var $ = function (id) { return document.getElementById(id); };
+  var views = ["home", "reserve", "outdoor", "rentals", "rules"];
+
+  function dayDate(d) { var t = new Date(); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() + d); return t; }
+  function time(s) { var m = OPEN + s * 30, h = Math.floor(m / 60), mm = m % 60; return (h % 12 || 12) + ":" + (mm ? "30" : "00") + (h >= 12 ? " p.m." : " a.m."); }
+  function prime(d, s) { var w = dayDate(d).getDay(); return w === 0 || w === 6 || OPEN + s * 30 >= 16 * 60; }
+
+  // Example schedule: the same day always shows the same reservations.
+  function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
+  var cache = {};
+  function schedule(d) {
+    var key = dayDate(d).toDateString();
+    if (cache[key]) return cache[key];
+    var r = rng(key.length * 7919 + dayDate(d).getDate() * 31 + dayDate(d).getMonth()), grid = [];
+    for (var c = 0; c < COURTS; c++) {
+      var row = new Array(SLOTS).fill(false), s = 0;
+      while (s < SLOTS) {
+        if (r() < (prime(d, s) ? 0.4 : 0.18)) { for (var k = 0, n = 2 + Math.floor(r() * 2); k < n && s < SLOTS; k++) row[s++] = true; }
+        else s++;
+      }
+      grid.push(row);
+    }
+    return (cache[key] = grid);
+  }
+  function free(row, s, len) { if (s + len > SLOTS) return false; for (var k = s; k < s + len; k++) if (row[k]) return false; return true; }
+  function nextFree(row, s, len) { for (var k = s + 1; k + len <= SLOTS; k++) if (free(row, k, len)) return k; return -1; }
+
+  var st = { day: 0, start: 22, len: 2 };
+
+  function fillStart() {
+    var html = "";
+    for (var s = 0; s + st.len <= SLOTS; s++) html += '<option value="' + s + '">' + time(s) + "</option>";
+    $("start").innerHTML = html;
+    if (st.start + st.len > SLOTS) st.start = SLOTS - st.len;
+    $("start").value = String(st.start);
+  }
+
+  function renderReserve() {
+    var grid = schedule(st.day), used = 0, html = "";
+    for (var c = 0; c < COURTS; c++) if (grid[c][st.start]) used++;
+    var level = used <= 2 ? "Not busy" : used <= 4 ? "Somewhat busy" : "Very busy";
+    $("busy").innerHTML = "<b>" + level + "</b> at " + time(st.start) + ": " + used + " of 6 courts in use.";
+    var cost = PRICE[prime(st.day, st.start) ? "prime" : "non"][st.len];
+    for (c = 0; c < COURTS; c++) {
+      var row = grid[c];
+      if (free(row, st.start, st.len)) {
+        html += "<li><span>Court " + (c + 1) + ' · <span class="open">Open</span> · $' + cost + ' (student)</span>' +
+          '<button class="btn" type="button" data-court="' + c + '">Reserve<span class="sr-only"> court ' + (c + 1) + "</span></button></li>";
+      } else {
+        var n = nextFree(row, st.start, st.len);
+        html += "<li><span>Court " + (c + 1) + ' · <span class="taken">Taken</span> · ' + (n >= 0 ? "free at " + time(n) : "no more openings today") + "</span>" +
+          (n >= 0 ? '<button class="btn plain" type="button" data-jump="' + n + '">Show ' + time(n) + "</button>" : "") + "</li>";
+      }
+    }
+    $("courts").innerHTML = html;
+  }
+
+  function renderOutdoor() {
+    var r = rng(new Date().getDate() * 97 + new Date().getHours()), open = 0;
+    for (var i = 0; i < 15; i++) if (r() > 0.55) open++;
+    $("out-count").textContent = open + " of 15 courts open";
+  }
+
+  function show() {
+    var v = location.hash.slice(1);
+    if (views.indexOf(v) < 0) v = "home";
+    views.forEach(function (name) { $("v-" + name).hidden = name !== v; });
+    $("confirm").hidden = true;
+    if (v === "reserve") renderReserve();
+    var h = $("h-" + v); if (h && location.hash) h.focus();
+    window.scrollTo(0, 0);
+  }
+
+  $("day").addEventListener("change", function () { st.day = +this.value; $("confirm").hidden = true; renderReserve(); });
+  $("start").addEventListener("change", function () { st.start = +this.value; $("confirm").hidden = true; renderReserve(); });
+  $("dur").addEventListener("change", function () { st.len = +this.value; fillStart(); $("confirm").hidden = true; renderReserve(); });
+  $("courts").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.jump) { st.start = +b.dataset.jump; $("start").value = String(st.start); renderReserve(); $("start").focus(); return; }
+    var c = +b.dataset.court;
+    $("confirm").hidden = false;
+    $("confirm").innerHTML = "<b>Prototype:</b> Court " + (c + 1) + " at " + time(st.start) + " " + (st.day ? "tomorrow" : "today") +
+      " would be booked here. No real booking was made.";
+  });
+  window.addEventListener("hashchange", show);
+
+  fillStart(); renderOutdoor(); show();
+})();
+</script>
+</body>
+</html>
